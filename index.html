@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Love Story - Wedding Invitation</title>
+    <style>
+        /* --- RESET & DESIGN SYSTEM --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-dark: #1f110b;
+            --bg-gradient: radial-gradient(circle, #2a160e 0%, #150905 100%);
+            --gold-primary: #d4af37;
+            --gold-glow: #f3e5ab;
+            --text-light: #fffdfa;
+            --romantic-pink: #e8b4b8;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Cinzel', 'Georgia', serif;
+            background: var(--bg-gradient);
+            overflow: hidden;
+            color: var(--text-light);
+        }
+
+        /* --- BACKGROUND CANVAS (FALLING PETALS & GOLDBUST) --- */
+        canvas#particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* --- SCENE MANAGEMENT --- */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s ease-in-out;
+            z-index: 3;
+        }
+
+        .scene.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* --- SCENE 1: THE ENVELOPE --- */
+        #envelopeScene {
+            background: radial-gradient(circle, rgba(255,253,250,0.95) 0%, rgba(244,227,215,0.7) 100%);
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 420px;
+            height: 300px;
+            cursor: pointer;
+            transition: transform 1s ease;
+            filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.35));
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fffdfa;
+            border-radius: 6px;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 210px solid transparent;
+            border-right: 210px solid transparent;
+            border-top: 160px solid #fcf6f0;
+            transform-origin: top;
+            transition: transform 1s ease 0.2s;
+            z-index: 5;
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 135px;
+            left: 50%;
+            transform: translateX(-50%) scale(1);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #e6c565 0%, #b89123 100%);
+            border-radius: 50%;
+            z-index: 6;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        .envelope-wrapper.open .envelope-flap { transform: rotateX(180deg); z-index: 3; }
+        .envelope-wrapper.open .wax-seal { transform: translateX(-50%) scale(0); opacity: 0; }
+        .envelope-wrapper.open { transform: scale(0.85) translateY(80px); opacity: 0; pointer-events: none; transition: all 1.2s ease 0.2s; }
+
+        .click-hint {
+            position: absolute;
+            bottom: -50px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #5a4535;
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        /* --- SCENE 2: MAIN MOVIE STAGE --- */
+        #movieScene {
+            display: block;
+            padding: 2vh 2vw;
+        }
+
+        /* --- LUXURY VINTAGE CAR --- */
+        .car-container {
+            position: absolute;
+            bottom: 12%;
+            left: -600px;
+            width: 520px;
+            height: 180px;
+            z-index: 4;
+            transition: left 4.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .vintage-car {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .car-body {
+            position: absolute;
+            bottom: 30px;
+            width: 500px;
+            height: 85px;
+            background: #fcf9f2;
+            border-radius: 80px 40px 25px 35px;
+            box-shadow: inset -10px -10px 25px rgba(0,0,0,0.15), 0 15px 30px rgba(0,0,0,0.5);
+        }
+
+        .car-cabin {
+            position: absolute;
+            bottom: 110px;
+            left: 140px;
+            width: 220px;
+            height: 60px;
+            background: #fcf9f2;
+            border-radius: 120px 90px 10px 0;
+        }
+
+        .car-window {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 95px;
+            height: 42px;
+            background: #1f110b;
+            border-radius: 90px 10px 5px 5px;
+        }
+
+        .car-window.rear { left: 115px; border-radius: 10px 70px 5px 5px; }
+        .wheel { position: absolute; bottom: 8px; width: 62px; height: 62px; background: #1a1a1a; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.5); }
+        .wheel-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; background: var(--gold-primary); border-radius: 50%; }
+        .wheel.front { left: 80px; }
+        .wheel.rear { left: 360px; }
+
+        .car-drive-to-center { left: calc(50% - 260px) !important; }
+        .car-drive-away { left: 130% !important; transition: left 3.5s cubic-bezier(0.4, 0, 1, 1) !important; }
+
+        /* --- RESPONSIVE SPLIT LAYOUT --- */
+        .split-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .couple-zone {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100%;
+        }
+
+        /* أنيميشن نزول الكوبل */
+        .couple-box {
+            position: absolute;
+            bottom: 12%;
+            left: 50%;
+            transform: translate(-50%, 40px) scale(0.2);
+            opacity: 0;
+            z-index: 5;
+            transition: all 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .couple-box.step-out {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1.1);
+        }
+
+        /* الانتقال للجنب مضاف له لمعان دائري فخم خلفهم */
+        .couple-box.move-aside {
+            left: 25%;
+            transform: translate(-50%, 0) scale(1);
+            animation: gentleFloat 4s infinite ease-in-out;
+        }
+
+        /* هالة مضيئة فخمة خلف الكوبل مستوحاة من الصورة الثانية */
+        .couple-box.move-aside::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(212,175,55,0.25) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .couple-img {
+            width: 280px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
+        }
+
+        /* فقاعة الكلام التفاعلية المضيئة */
+        .speech-bubble {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            background: rgba(26, 15, 10, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid var(--gold-primary);
+            padding: 12px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.4);
+            color: var(--gold-glow);
+            font-size: 22px;
+            letter-spacing: 3px;
+            white-space: nowrap;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+        .speech-bubble.show { transform: translateX(-50%) scale(1); }
+
+        /* --- LUXURY INFO CONTAINER WITH CUSTOM FRAMES --- */
+        .info-zone {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(40px);
+            transition: all 2s ease;
+            text-align: center;
+            padding-right: 4vw;
+        }
+        
+        /* تزويق الإطار الفخم المحيط بالكلام بالكامل من الصورة المرجعية */
+        .info-card-frame {
+            border: 3px double var(--gold-primary);
+            border-radius: 15px;
+            padding: 35px 25px;
+            background: rgba(26, 15, 10, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 15px rgba(212,175,55,0.1);
+            position: relative;
+            max-width: 500px;
+        }
+
+        /* الزخارف الجانبية الكلاسيكية */
+        .info-card-frame::before, .info-card-frame::after {
+            content: "✨";
+            position: absolute;
+            color: var(--gold-primary);
+            font-size: 18px;
+        }
+        .info-card-frame::before { top: 10px; left: 10px; }
+        .info-card-frame::after { bottom: 10px; right: 10px; }
+
+        .info-zone.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .names {
+            font-size: 40px;
+            font-family: 'Playfair Display', serif;
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-shadow: 0 3px 8px rgba(0,0,0,0.8);
+        }
+
+        .message {
+            font-size: 15px;
+            font-style: italic;
+            color: #f4e3d7;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .details {
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold-glow);
+            line-height: 1.8;
+            border-top: 1px dashed rgba(212,175,55,0.4);
+            border-bottom: 1px dashed rgba(212,175,55,0.4);
+            padding: 12px 0;
+            margin-bottom: 25px;
+        }
+
+        /* --- ORNATE GLASS COUNTDOWN --- */
+        .countdown-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .countdown-item {
+            min-width: 75px;
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+
+        .countdown-value { font-size: 24px; color: #fff; display: block; font-weight: bold; }
+        .countdown-label { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--romantic-pink); margin-top: 2px; display: block; }
+
+        /* زر الـ RSVP الفخم المضيء */
+        .rsvp-btn {
+            background: linear-gradient(90deg, #b89123 0%, #d4af37 50%, #b89123 100%);
+            color: #1f110b;
+            font-weight: bold;
+            border: none;
+            padding: 12px 35px;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(212,175,55,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .rsvp-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px var(--gold-primary);
+        }
+
+        /* --- KEYFRAMES --- */
+        @keyframes pulseGlow { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        @keyframes gentleFloat { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -12px); } }
+
+        /* ==========================================
+           تعديلات التجاوب للموبايل (حل مشكلة المساحات والتداخل)
+           ========================================== */
+        @media(max-width: 850px) {
+            .split-layout { 
+                flex-direction: column; 
+                justify-content: flex-start; 
+                padding-top: 1vh;
+            }
+            .couple-zone { 
+                height: 38%; 
+                flex: none; 
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            .info-zone { 
+                flex: none; 
+                padding-right: 0; 
+                width: 100%;
+                transform: translateY(30px);
+            }
+            .info-zone.visible {
+                transform: translateY(0);
+            }
+            .info-card-frame {
+                padding: 20px 15px;
+                width: 92%;
+            }
+            .couple-box.move-aside { 
+                left: 50%; 
+                bottom: -10px; 
+                transform: translate(-50%, 0) scale(0.8); 
+            }
+            .couple-box.move-aside::before {
+                width: 240px;
+                height: 240px;
+            }
+            @keyframes gentleFloat { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -6px); } }
+            .names { font-size: 28px; margin-bottom: 8px; }
+            .message { font-size: 13px; margin-bottom: 15px; }
+            .details { font-size: 11px; padding: 8px 0; margin-bottom: 15px; }
+            .countdown-item { min-width: 60px; padding: 8px 4px; }
+            .countdown-value { font-size: 18px; }
+            
+            /* تعديل حجم العربية في الموبايل */
+            .car-container { width: 320px; height: 120px; bottom: 8%; }
+            .car-body { width: 300px; height: 55px; bottom: 20px; }
+            .car-cabin { width: 130px; height: 35px; left: 85px; bottom: 70px; }
+            .wheel { width: 38px; height: 38px; bottom: 5px; }
+            .wheel.rear { left: 220px; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- الكانفاس المسؤول عن تأثير تساقط الورد والبريق المتلألئ معاً -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- 1. الجواب الفاخر البدائي -->
+    <div class="scene active" id="envelopeScene">
+        <div class="envelope-wrapper" id="envelopeInteractive" onclick="openInvitation()">
+            <div class="envelope-flap"></div>
+            <div class="envelope"></div>
+            <div class="wax-seal">🤍</div>
+            <div class="click-hint">Click to Open</div>
+        </div>
+    </div>
+
+    <!-- 2. المسرح الرئيسي -->
+    <div class="scene" id="movieScene">
+        
+        <div class="split-layout">
+            
+            <!-- نطاق حركة ونزول العروسين -->
+            <div class="couple-zone">
+                <div class="couple-box" id="weddingCouple">
+                    <div class="speech-bubble" id="speechBubble">YOU ARE INVITED</div>
+                    <img src="./download (3).png" alt="Wedding Couple" class="couple-img">
+                </div>
+            </div>
+
+            <!-- نطاق الكلمات والعد التنازلي المزدان بالإطارات الذهبية -->
+            <div class="info-zone" id="infoZone">
+                <div class="info-card-frame">
+                    <div class="names">Sondos &amp; Ziad</div>
+                    <div class="message">"Join us to celebrate our love story as we step into our beautiful forever together."</div>
+                    
+                    <div class="details">
+                        Saturday, October 17, 2026<br>
+                        The Grand Rosewood Estate, Riviera
+                    </div>
+                    
+                    <!-- العداد التنازلي الزجاجي الفخم -->
+                    <div class="countdown-container">
+                        <div class="countdown-item"><span class="countdown-value" id="days">00</span><span class="countdown-label">Days</span></div>
+                        <div class="countdown-item"><span class="countdown-value" id="hours">00</span><span class="countdown-label">Hrs</span></div>
+                        <div class="countdown-item"><span class="countdown-value" id="minutes">00</span><span class="countdown-label">Min</span></div>
+                        <div class="countdown-item"><span class="countdown-value" id="seconds">00</span><span class="countdown-label">Sec</span></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- العربية الفخمة التي تتحرك بناءً على طلبك السينمائي -->
+        <div class="car-container" id="vintageCar">
+            <div class="vintage-car">
+                <div class="car-cabin"><div class="car-window front"></div><div class="car-window rear"></div></div>
+                <div class="car-body"></div>
+                <div class="wheel front"><div class="wheel-hub"></div></div>
+                <div class="wheel rear"><div class="wheel-hub"></div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* --- ENGINE: FLOATING ROSE PETALS & GOLDEN BOKEH GEMS --- */
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        class Particle {
+            constructor(type) { this.type = type; this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height - 20;
+                this.size = this.type === 'petal' ? Math.random() * 6 + 6 : Math.random() * 4 + 2;
+                this.speedY = this.type === 'petal' ? Math.random() * 1.0 + 0.6 : Math.random() * 1.5 + 0.8;
+                this.speedX = Math.random() * 1.0 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.3;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 2 - 1;
+                this.color = this.type === 'petal' ? `rgba(232, 180, 184, ${this.opacity})` : `rgba(212, 175, 55, ${this.opacity})`;
+            }
+            update() { this.y += this.speedY; this.x += this.speedX; this.rotation += this.rotationSpeed; if (this.y > canvas.height) this.reset(); }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y);
+                if (this.type === 'petal') {
+                    ctx.rotate((this.rotation * Math.PI) / 180); ctx.fillStyle = this.color; ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2); ctx.fill();
+                } else {
+                    ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = "rgba(212, 175, 55, 0.8)";
+                    ctx.beginPath(); ctx.arc(0, 0, this.size, 0, Math.PI * 2); ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+        // توليد ورد طائر + ذرات بريق ذهبي فخم في نفس الوقت لملء أي فراغات
+        for(let i=0; i<35; i++) particles.push(new Particle('petal'));
+        for(let i=0; i<35; i++) particles.push(new Particle('gold'));
+        function runCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(runCanvas); }
+        runCanvas();
+
+        /* --- CINEMATIC TIMELINE CONTROLLER --- */
+        function openInvitation() {
+            const envelope = document.getElementById('envelopeInteractive');
+            const envelopeScene = document.getElementById('envelopeScene');
+            const movieScene = document.getElementById('movieScene');
+            const car = document.getElementById('vintageCar');
+            const couple = document.getElementById('weddingCouple');
+            const bubble = document.getElementById('speechBubble');
+            const infoZone = document.getElementById('infoZone');
+
+            envelope.classList.add('open');
+
+            setTimeout(() => {
+                envelopeScene.classList.remove('active');
+                movieScene.classList.add('active');
+                
+                // دخول العربية البيضاء للمنتصف
+                setTimeout(() => { car.classList.add('car-drive-to-center'); }, 300);
+
+                // نزول العروسين فجأة بأنيميشن تدرجي فخم
+                setTimeout(() => { couple.classList.add('step-out'); }, 4800);
+
+                // ظهور فقاعة الكلام "YOU ARE INVITED"
+                setTimeout(() => { bubble.classList.add('show'); }, 6500);
+
+                // العربية تغادر، والعروسين يتحركوا بسلاسة للجنب مع تفعيل هالة الإضاءة الفخمة خلفهم
+                setTimeout(() => {
+                    bubble.classList.remove('show');
+                    car.classList.remove('car-drive-to-center');
+                    car.classList.add('car-drive-away'); 
+                    couple.classList.add('move-aside'); 
+                }, 9500);
+
+                // ظهور الإطار المزوق الذهبي بالكامل وبداخله بيانات الفرح والعد التنازلي
+                setTimeout(() => { infoZone.classList.add('visible'); }, 11000);
+
+            }, 1300);
+        }
+
+        /* --- COUNTDOWN CALCULATOR --- */
+        const dateTarget = new Date("October 17, 2026 16:00:00").getTime();
+        function calcTimer() {
+            const now = new Date().getTime();
+            const gap = dateTarget - now;
+            if(gap <= 0) return;
+            const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+            const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((gap % (1000 * 60)) / 1000);
+            document.getElementById("days").innerText = d < 10 ? '0'+d : d;
+            document.getElementById("hours").innerText = h < 10 ? '0'+h : h;
+            document.getElementById("minutes").innerText = m < 10 ? '0'+m : m;
+            document.getElementById("seconds").innerText = s < 10 ? '0'+s : s;
+        }
+        setInterval(calcTimer, 1000); calcTimer();
+    </script>
+</body>
+</html>
