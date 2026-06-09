@@ -29,7 +29,6 @@
             color: var(--text-light);
         }
 
-        /* --- BACKGROUND CANVAS (FALLING PETALS & GOLDBUST) --- */
         canvas#particleCanvas {
             position: fixed;
             top: 0;
@@ -68,11 +67,15 @@
 
         .envelope-wrapper {
             position: relative;
-            width: 420px;
-            height: 300px;
+            width: 320px;
+            height: 240px;
             cursor: pointer;
             transition: transform 1s ease;
             filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.35));
+        }
+
+        @media(min-width: 850px) {
+            .envelope-wrapper { width: 420px; height: 300px; }
         }
 
         .envelope {
@@ -89,21 +92,24 @@
             left: 0;
             width: 0;
             height: 0;
-            border-left: 210px solid transparent;
-            border-right: 210px solid transparent;
-            border-top: 160px solid #fcf6f0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 120px solid #fcf6f0;
             transform-origin: top;
             transition: transform 1s ease 0.2s;
             z-index: 5;
         }
+        @media(min-width: 850px) {
+            .envelope-flap { border-left-width: 210px; border-right-width: 210px; border-top-width: 160px; }
+        }
 
         .wax-seal {
             position: absolute;
-            top: 135px;
+            top: 100px;
             left: 50%;
             transform: translateX(-50%) scale(1);
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: radial-gradient(circle, #e6c565 0%, #b89123 100%);
             border-radius: 50%;
             z-index: 6;
@@ -111,8 +117,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 22px;
+            font-size: 18px;
             transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+        @media(min-width: 850px) {
+            .wax-seal { top: 135px; width: 60px; height: 60px; font-size: 22px; }
         }
 
         .envelope-wrapper.open .envelope-flap { transform: rotateX(180deg); z-index: 3; }
@@ -134,10 +143,12 @@
         /* --- SCENE 2: MAIN MOVIE STAGE --- */
         #movieScene {
             display: block;
-            padding: 2vh 2vw;
+            width: 100%;
+            height: 100%;
+            position: relative;
         }
 
-        /* --- LUXURY VINTAGE CAR --- */
+        /* --- VINTAGE CAR --- */
         .car-container {
             position: absolute;
             bottom: 12%;
@@ -148,42 +159,10 @@
             transition: left 4.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .vintage-car {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        .car-body {
-            position: absolute;
-            bottom: 30px;
-            width: 500px;
-            height: 85px;
-            background: #fcf9f2;
-            border-radius: 80px 40px 25px 35px;
-            box-shadow: inset -10px -10px 25px rgba(0,0,0,0.15), 0 15px 30px rgba(0,0,0,0.5);
-        }
-
-        .car-cabin {
-            position: absolute;
-            bottom: 110px;
-            left: 140px;
-            width: 220px;
-            height: 60px;
-            background: #fcf9f2;
-            border-radius: 120px 90px 10px 0;
-        }
-
-        .car-window {
-            position: absolute;
-            top: 10px;
-            left: 15px;
-            width: 95px;
-            height: 42px;
-            background: #1f110b;
-            border-radius: 90px 10px 5px 5px;
-        }
-
+        .vintage-car { position: relative; width: 100%; height: 100%; }
+        .car-body { position: absolute; bottom: 30px; width: 500px; height: 85px; background: #fcf9f2; border-radius: 80px 40px 25px 35px; box-shadow: inset -10px -10px 25px rgba(0,0,0,0.15), 0 15px 30px rgba(0,0,0,0.5); }
+        .car-cabin { position: absolute; bottom: 110px; left: 140px; width: 220px; height: 60px; background: #fcf9f2; border-radius: 120px 90px 10px 0; }
+        .car-window { position: absolute; top: 10px; left: 15px; width: 95px; height: 42px; background: #1f110b; border-radius: 90px 10px 5px 5px; }
         .car-window.rear { left: 115px; border-radius: 10px 70px 5px 5px; }
         .wheel { position: absolute; bottom: 8px; width: 62px; height: 62px; background: #1a1a1a; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.5); }
         .wheel-hub { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; background: var(--gold-primary); border-radius: 50%; }
@@ -193,7 +172,7 @@
         .car-drive-to-center { left: calc(50% - 260px) !important; }
         .car-drive-away { left: 130% !important; transition: left 3.5s cubic-bezier(0.4, 0, 1, 1) !important; }
 
-        /* --- RESPONSIVE SPLIT LAYOUT --- */
+        /* --- SPLIT LAYOUT (DESKTOP) --- */
         .split-layout {
             display: flex;
             width: 100%;
@@ -211,10 +190,9 @@
             height: 100%;
         }
 
-        /* أنيميشن نزول الكوبل */
         .couple-box {
             position: absolute;
-            bottom: 12%;
+            bottom: 15%;
             left: 50%;
             transform: translate(-50%, 40px) scale(0.2);
             opacity: 0;
@@ -227,14 +205,12 @@
             transform: translate(-50%, 0) scale(1.1);
         }
 
-        /* الانتقال للجنب مضاف له لمعان دائري فخم خلفهم */
         .couple-box.move-aside {
             left: 25%;
             transform: translate(-50%, 0) scale(1);
             animation: gentleFloat 4s infinite ease-in-out;
         }
 
-        /* هالة مضيئة فخمة خلف الكوبل مستوحاة من الصورة الثانية */
         .couple-box.move-aside::before {
             content: '';
             position: absolute;
@@ -255,15 +231,12 @@
             filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
         }
 
-        /* فقاعة الكلام التفاعلية المضيئة */
         .speech-bubble {
             position: absolute;
             top: -60px;
             left: 50%;
             transform: translateX(-50%) scale(0);
-            background: rgba(26, 15, 10, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(10, 5, 3, 0.9);
             border: 2px solid var(--gold-primary);
             padding: 12px 25px;
             border-radius: 30px;
@@ -277,7 +250,7 @@
         }
         .speech-bubble.show { transform: translateX(-50%) scale(1); }
 
-        /* --- LUXURY INFO CONTAINER WITH CUSTOM FRAMES --- */
+        /* --- INFO CONTAINER --- */
         .info-zone {
             flex: 1;
             display: flex;
@@ -291,20 +264,18 @@
             padding-right: 4vw;
         }
         
-        /* تزويق الإطار الفخم المحيط بالكلام بالكامل من الصورة المرجعية */
         .info-card-frame {
             border: 3px double var(--gold-primary);
             border-radius: 15px;
             padding: 35px 25px;
-            background: rgba(26, 15, 10, 0.65);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 15px rgba(212,175,55,0.1);
+            background: rgba(10, 5, 3, 0.85); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.15);
             position: relative;
             max-width: 500px;
         }
 
-        /* الزخارف الجانبية الكلاسيكية */
         .info-card-frame::before, .info-card-frame::after {
             content: "✨";
             position: absolute;
@@ -314,145 +285,128 @@
         .info-card-frame::before { top: 10px; left: 10px; }
         .info-card-frame::after { bottom: 10px; right: 10px; }
 
-        .info-zone.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
+        .info-zone.visible { opacity: 1; transform: translateX(0); }
+        .names { font-size: 40px; font-family: 'Playfair Display', serif; color: #ffffff; margin-bottom: 15px; text-shadow: 0 3px 8px rgba(0,0,0,0.8); }
+        .message { font-size: 15px; font-style: italic; color: #f4e3d7; margin-bottom: 25px; line-height: 1.5; }
+        .details { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-glow); line-height: 1.8; border-top: 1px dashed rgba(212,175,55,0.4); border-bottom: 1px dashed rgba(212,175,55,0.4); padding: 12px 0; margin-bottom: 25px; }
 
-        .names {
-            font-size: 40px;
-            font-family: 'Playfair Display', serif;
-            color: #ffffff;
-            margin-bottom: 15px;
-            text-shadow: 0 3px 8px rgba(0,0,0,0.8);
-        }
-
-        .message {
-            font-size: 15px;
-            font-style: italic;
-            color: #f4e3d7;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .details {
-            font-size: 13px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--gold-glow);
-            line-height: 1.8;
-            border-top: 1px dashed rgba(212,175,55,0.4);
-            border-bottom: 1px dashed rgba(212,175,55,0.4);
-            padding: 12px 0;
-            margin-bottom: 25px;
-        }
-
-        /* --- ORNATE GLASS COUNTDOWN --- */
-        .countdown-container {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .countdown-item {
-            min-width: 75px;
-            padding: 12px 8px;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-        }
-
+        /* --- COUNTDOWN --- */
+        .countdown-container { display: flex; gap: 12px; justify-content: center; }
+        .countdown-item { min-width: 75px; padding: 12px 8px; background: #0a0503; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
         .countdown-value { font-size: 24px; color: #fff; display: block; font-weight: bold; }
         .countdown-label { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--romantic-pink); margin-top: 2px; display: block; }
 
-        /* زر الـ RSVP الفخم المضيء */
-        .rsvp-btn {
-            background: linear-gradient(90deg, #b89123 0%, #d4af37 50%, #b89123 100%);
-            color: #1f110b;
-            font-weight: bold;
-            border: none;
-            padding: 12px 35px;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border-radius: 25px;
-            box-shadow: 0 5px 15px rgba(212,175,55,0.4);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .rsvp-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px var(--gold-primary);
-        }
-
-        /* --- KEYFRAMES --- */
         @keyframes pulseGlow { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
         @keyframes gentleFloat { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -12px); } }
 
-        /* ==========================================
-           تعديلات التجاوب للموبايل (حل مشكلة المساحات والتداخل)
-           ========================================== */
+        /* ======================================================
+           🔥 التعديل السحري والنهائي لحل مشكلة الموبايل تمااااماً 🔥
+           ====================================================== */
         @media(max-width: 850px) {
+            body, html { overflow: hidden !important; position: relative; }
+            
             .split-layout { 
                 flex-direction: column; 
                 justify-content: flex-start; 
-                padding-top: 1vh;
+                align-items: center;
+                height: 100%;
+                width: 100%;
+                padding: 0;
             }
+
+            /* تثبيت زون الكوبل في الـ 35% العلوية من الشاشة لمنع الارتفاع العشوائي */
             .couple-zone { 
-                height: 38%; 
+                height: 50%; 
+                width: 100%;
                 flex: none; 
+                display: flex;
+                align-items: flex-end; 
+                justify-content: center;
+                position: relative;
                 margin-bottom: 10px;
-                width: 100%;
             }
-            .info-zone { 
-                flex: none; 
-                padding-right: 0; 
-                width: 100%;
-                transform: translateY(30px);
+
+            /* الكوبل هنا هيفضل ثابت في مكانه الصح بدون ما يطير فوق الشاشة */
+            .couple-box {
+                bottom: 5px !important;
+                top: auto !important;
             }
-            .info-zone.visible {
-                transform: translateY(0);
+
+            .couple-box.step-out {
+                transform: translate(-50%, 0) scale(0.68) !important;
+                transform-origin: bottom center;
             }
-            .info-card-frame {
-                padding: 20px 15px;
-                width: 92%;
+
+            /* عند الانتقال للجنب (الأنيميشن التاني)، هيفضل في النص برضه لكن بحجم متناسق للموبايل */
+            .couple-box.move-aside {
+                left: 50% !important; 
+                bottom: 5px !important;
+                transform: translate(-50%, 0) scale(0.68) !important;
+                transform-origin: bottom center;
+                animation: gentleFloatMobile 4s infinite ease-in-out;
             }
-            .couple-box.move-aside { 
-                left: 50%; 
-                bottom: -10px; 
-                transform: translate(-50%, 0) scale(0.8); 
-            }
-            .couple-box.move-aside::before {
-                width: 240px;
-                height: 240px;
-            }
-            @keyframes gentleFloat { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -6px); } }
-            .names { font-size: 28px; margin-bottom: 8px; }
-            .message { font-size: 13px; margin-bottom: 15px; }
-            .details { font-size: 11px; padding: 8px 0; margin-bottom: 15px; }
-            .countdown-item { min-width: 60px; padding: 8px 4px; }
-            .countdown-value { font-size: 18px; }
             
-            /* تعديل حجم العربية في الموبايل */
-            .car-container { width: 320px; height: 120px; bottom: 8%; }
-            .car-body { width: 300px; height: 55px; bottom: 20px; }
-            .car-cabin { width: 130px; height: 35px; left: 85px; bottom: 70px; }
-            .wheel { width: 38px; height: 38px; bottom: 5px; }
-            .wheel.rear { left: 220px; }
+            .couple-box.move-aside::before { width: 180px; height: 180px; }
+            .couple-img { width: 250px; height: auto; }
+
+            /* ظهور كلمة YOU ARE INVITED بوضوح فوق راس الكوبل تماماً ومفيش حاجة تقطعها */
+            .speech-bubble {
+                top: -55px !important;
+                font-size: 15px !important;
+                padding: 6px 16px !important;
+                letter-spacing: 2px;
+            }
+            
+            @keyframes gentleFloatMobile { 0%, 100% { transform: translate(-50%, 0) scale(0.68); } 50% { transform: translate(-50%, -6px) scale(0.68); } }
+
+            /* زون البيانات هتبدأ علطول تحت الكوبل وبانسيابية */
+            .info-zone { 
+                flex: 1;
+                width: 100%;
+                padding-right: 0; 
+                justify-content: flex-start;
+                transform: translateY(20px);
+                z-index: 6;
+            }
+            .info-zone.visible { transform: translateY(0); }
+
+            /* تفاصيل الكارت الذهبي السواد بتاعه داكن ومريح ومبيعملش سكرول */
+            .info-card-frame {
+                padding: 16px 14px;
+                width: 88%;
+                max-height: 56vh;
+                background: rgba(8, 4, 2, 0.94) !important; 
+                box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            }
+            
+            .names { font-size: 24px; margin-bottom: 4px; }
+            .message { font-size: 11px; margin-bottom: 8px; line-height: 1.4; }
+            .details { font-size: 10px; padding: 6px 0; margin-bottom: 10px; }
+            
+            /* مربعات العداد التنازلي سوداء بالكامل وجميلة جداً ومظبوطة */
+            .countdown-container { gap: 6px; }
+            .countdown-item { min-width: 52px; padding: 6px 2px; border-radius: 6px; background: #000000 !important; border: 1px solid rgba(212, 175, 55, 0.5); }
+            .countdown-value { font-size: 16px; }
+            .countdown-label { font-size: 7px; }
+            
+            /* تصغير وضبط مسار السيارة الكلاسيكية في الموبايل عشان تظهر كاملة فوق الكارت وتحت الكوبل */
+            .car-container { width: 260px; height: 100px; bottom: 42%; left: -300px; }
+            .car-body { width: 240px; height: 42px; bottom: 10px; }
+            .car-cabin { width: 110px; height: 26px; left: 65px; bottom: 50px; }
+            .car-window { width: 45px; height: 18px; top: 5px; }
+            .car-window.rear { left: 55px; }
+            .wheel { width: 30px; height: 30px; bottom: 0px; }
+            .wheel.front { left: 40px; }
+            .wheel.rear { left: 170px; }
+            .car-drive-to-center { left: calc(50% - 130px) !important; }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- الكانفاس المسؤول عن تأثير تساقط الورد والبريق المتلألئ معاً -->
     <canvas id="particleCanvas"></canvas>
 
-    <!-- 1. الجواب الفاخر البدائي -->
     <div class="scene active" id="envelopeScene">
         <div class="envelope-wrapper" id="envelopeInteractive" onclick="openInvitation()">
             <div class="envelope-flap"></div>
@@ -462,12 +416,9 @@
         </div>
     </div>
 
-    <!-- 2. المسرح الرئيسي -->
     <div class="scene" id="movieScene">
-        
         <div class="split-layout">
             
-            <!-- نطاق حركة ونزول العروسين -->
             <div class="couple-zone">
                 <div class="couple-box" id="weddingCouple">
                     <div class="speech-bubble" id="speechBubble">YOU ARE INVITED</div>
@@ -475,7 +426,6 @@
                 </div>
             </div>
 
-            <!-- نطاق الكلمات والعد التنازلي المزدان بالإطارات الذهبية -->
             <div class="info-zone" id="infoZone">
                 <div class="info-card-frame">
                     <div class="names">Sondos &amp; Ziad</div>
@@ -486,20 +436,17 @@
                         The Grand Rosewood Estate, Riviera
                     </div>
                     
-                    <!-- العداد التنازلي الزجاجي الفخم -->
                     <div class="countdown-container">
                         <div class="countdown-item"><span class="countdown-value" id="days">00</span><span class="countdown-label">Days</span></div>
                         <div class="countdown-item"><span class="countdown-value" id="hours">00</span><span class="countdown-label">Hrs</span></div>
                         <div class="countdown-item"><span class="countdown-value" id="minutes">00</span><span class="countdown-label">Min</span></div>
                         <div class="countdown-item"><span class="countdown-value" id="seconds">00</span><span class="countdown-label">Sec</span></div>
                     </div>
-
                 </div>
             </div>
 
         </div>
 
-        <!-- العربية الفخمة التي تتحرك بناءً على طلبك السينمائي -->
         <div class="car-container" id="vintageCar">
             <div class="vintage-car">
                 <div class="car-cabin"><div class="car-window front"></div><div class="car-window rear"></div></div>
@@ -512,7 +459,7 @@
     </div>
 
     <script>
-        /* --- ENGINE: FLOATING ROSE PETALS & GOLDEN BOKEH GEMS --- */
+        /* --- ENGINE: FLOATING ROSE PETALS & GEMS --- */
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -545,13 +492,12 @@
                 ctx.restore();
             }
         }
-        // توليد ورد طائر + ذرات بريق ذهبي فخم في نفس الوقت لملء أي فراغات
-        for(let i=0; i<35; i++) particles.push(new Particle('petal'));
-        for(let i=0; i<35; i++) particles.push(new Particle('gold'));
+        for(let i=0; i<25; i++) particles.push(new Particle('petal'));
+        for(let i=0; i<25; i++) particles.push(new Particle('gold'));
         function runCanvas() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(runCanvas); }
         runCanvas();
 
-        /* --- CINEMATIC TIMELINE CONTROLLER --- */
+        /* --- TIMELINE CONTROLLER --- */
         function openInvitation() {
             const envelope = document.getElementById('envelopeInteractive');
             const envelopeScene = document.getElementById('envelopeScene');
@@ -567,16 +513,11 @@
                 envelopeScene.classList.remove('active');
                 movieScene.classList.add('active');
                 
-                // دخول العربية البيضاء للمنتصف
+                // الأوقات المتناسقة لظهور الأنيميشن ورا بعضه بالملي
                 setTimeout(() => { car.classList.add('car-drive-to-center'); }, 300);
-
-                // نزول العروسين فجأة بأنيميشن تدرجي فخم
                 setTimeout(() => { couple.classList.add('step-out'); }, 4800);
-
-                // ظهور فقاعة الكلام "YOU ARE INVITED"
                 setTimeout(() => { bubble.classList.add('show'); }, 6500);
 
-                // العربية تغادر، والعروسين يتحركوا بسلاسة للجنب مع تفعيل هالة الإضاءة الفخمة خلفهم
                 setTimeout(() => {
                     bubble.classList.remove('show');
                     car.classList.remove('car-drive-to-center');
@@ -584,13 +525,12 @@
                     couple.classList.add('move-aside'); 
                 }, 9500);
 
-                // ظهور الإطار المزوق الذهبي بالكامل وبداخله بيانات الفرح والعد التنازلي
                 setTimeout(() => { infoZone.classList.add('visible'); }, 11000);
 
             }, 1300);
         }
 
-        /* --- COUNTDOWN CALCULATOR --- */
+        /* --- COUNTDOWN --- */
         const dateTarget = new Date("October 17, 2026 16:00:00").getTime();
         function calcTimer() {
             const now = new Date().getTime();
